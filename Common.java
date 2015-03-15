@@ -134,6 +134,9 @@ public class Common
 					toAdd = toAdd + " ";
 				}	
 			}
+			
+			//Replace numbers with #
+			
 			//Add to ngram map
 			if(ngrams.containsKey(toAdd))
 			{
