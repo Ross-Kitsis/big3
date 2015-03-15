@@ -20,6 +20,6 @@ public class Gram
 	//Compute probabilities using formulas from presentation
 	public void buildProbability(Map<String,Integer> small, Map<String,Integer> large)
 	{
-		
+		//
 	}
 }
