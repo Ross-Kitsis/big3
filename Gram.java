@@ -4,22 +4,80 @@ import java.util.*;
 
 public class Gram 
 {
-	private String Sb; //Current
-	private Map<String,Double> probability;
+	private String current; //Current
+	private Map<String,Double> probability = new HashMap<String,Double>();
+	Random r = new Random(System.currentTimeMillis());
 	
-	public Gram(String Sb)
+	public Gram(String current)
 	{
-		this.Sb = Sb;
+		this.current = current;
 	}
 	
 	public String getCurrent()
 	{
-		return this.Sb;
+		return this.current;
 	}
 	
 	//Compute probabilities using formulas from presentation
-	public void buildProbability(Map<String,Integer> small, Map<String,Integer> large)
+	public void buildProbabilitySet(Map<String,Integer> small, Map<String,Integer> large) throws Exception
 	{
-		//
+		int total = 0;
+		
+		Integer numCurrent = small.get(current);
+		if(numCurrent == null)
+		{
+			//Indicates value was not in level n-1; should never get here
+			throw new Exception("Value not in map");
+		}else
+		{
+			int num = numCurrent.intValue();
+			Set<String> ngrams = large.keySet();
+			
+			//Check each key if it is in the form of current* and get total ngrams that match
+			for(String s:ngrams)
+			{
+				if(s.startsWith(this.current))
+				{
+					//Ngram starts with the the n-1 gram
+					total = total + large.get(s); //Get the total number of ngrams with the correct prefix
+				}
+			}
+			
+			int numGram = 0;
+			//Check each key if it is in the form of current* and get probabilities
+			for(String s:ngrams)
+			{
+				if(s.startsWith(this.current))
+				{					
+					numGram=large.get(s);
+					//System.out.println(numGram/(double)total);
+					probability.put(s, numGram/(double)total);
+				}
+			}
+			
+			
+		}
+	}
+	public String getNext()
+	{
+		String next = null;
+		Double rand = r.nextDouble();
+		Set<String> keys = probability.keySet();
+		double total = 0;
+		
+		for(String s:keys)
+		{
+			total +=probability.get(s);
+			if(rand <= total)
+			{
+				next = s.substring(s.indexOf(this.current)+1, s.length());
+				break;
+			}
+		}
+		return next;
+	}
+	public Map<String,Double> getProbabilitySet()
+	{
+		return this.probability;
 	}
 }

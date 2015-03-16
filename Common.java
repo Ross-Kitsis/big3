@@ -136,6 +136,7 @@ public class Common
 			}
 			
 			//Replace numbers with #
+			toAdd = toAdd.replaceAll("[0-9]+", "#");
 			
 			//Add to ngram map
 			if(ngrams.containsKey(toAdd))
