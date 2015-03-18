@@ -9,18 +9,19 @@ import java.util.*;
 
 public class Cv2 
 {
+	static int uniSize = 1;
+	static int biSize = 2;
+	static int triSize = 3;
+	static int numWord = 1000;
+	static Common c = new Common();
+	static Map<String,Integer> unigrams = new HashMap<String,Integer>();
+	static Map<String,Integer> bigrams = new HashMap<String,Integer>();
+	static Map<String,Integer> trigrams = new HashMap<String,Integer>();
+	static Map<String,Gram> alphS = new HashMap<String,Gram>();
+	static Map<String,Gram> alphT = new HashMap<String,Gram>();
+	
 	public static void main(String[] args)
 	{
-		Map<String,Integer> unigrams = new HashMap<String,Integer>();
-		Map<String,Integer> bigrams = new HashMap<String,Integer>();
-		Map<String,Integer> trigrams = new HashMap<String,Integer>();
-		Map<String,Gram> alphS = new HashMap<String,Gram>();
-		Map<String,Gram> alphT = new HashMap<String,Gram>();
-		int uniSize = 1;
-		int biSize = 2;
-		int triSize = 3;
-		int numWord = 1000;
-		Common c = new Common();
 		c.buildDictionary();
 		
 		
@@ -51,42 +52,13 @@ public class Cv2
 				e.printStackTrace();
 			}
 		}
-		
-		/*
-		Set<String> keys = unigrams.keySet();
-		Iterator<String> it = keys.iterator();
-		while(it.hasNext())
-		{
-			System.out.println(it.next());
-		}
-		*/
-		
-		/*
-		Gram g = new Gram("a");
-		try {
-			g.buildProbabilitySet(unigrams, bigrams);
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Map<String, Double> m = g.getProbabilitySet();
-		Set<String> s = m.keySet();
-		double i = 0;
-		for(String temp: s)
-		{
-			System.out.println(temp + " : " + m.get(temp));
-			i += m.get(temp);
-		}
-		System.out.println(i);
-		
-		System.out.println(g.getNext());
-		System.out.println(g.getNext());
-		System.out.println(g.getNext());
-		*/
-		
-		//Build second order probabilities 
+		//Second Order ##############
+//		secondOrder();
+		//Third Order ##############
+		thirdOrder();
+	}
+	public static void secondOrder()
+	{
 		Set<String> uni = unigrams.keySet();
 		Gram g;
 		for(String s:uni)
@@ -95,7 +67,7 @@ public class Cv2
 			try {
 				g.buildProbabilitySet(unigrams, bigrams);
 				alphS.put(s, g);
-				System.out.println(g.getCurrent() + " : " + g.getNext());
+				//System.out.println(g.getCurrent() + " : " + g.getNext());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -134,41 +106,76 @@ public class Cv2
 				toAdd.append(next);
 				last = next;
 			}
-			
-			
 		}
-		
-		/*
-		for(int i = 0; i < numWord;i++)
-		{
-			System.out.println(words[i]);
-		}*/
 		List<String> validWords = c.findWords(words);
 		
 		System.out.println("Number of words created: " + validWords.size());
 		System.out.println("% Words valid: " + validWords.size() / (double)(numWord) * 100);
 		
 		System.out.println("---DONE Second Order---");
-		
-		
-		
-		//############################################
-		/*
-		//Build third order probabilities 
+	}
+	
+	public static void thirdOrder()
+	{
 		Set<String> bi = bigrams.keySet();
+		Gram g;
 		for(String s:bi)
 		{
 			g = new Gram(s);
 			try {
 				g.buildProbabilitySet(bigrams, trigrams);
 				alphT.put(s, g);
-				System.out.println(g.getCurrent() + " : " + g.getNext());
+				//System.out.println(s + " : " + g.getCurrent() + " : " + g.getNext());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		*/
-
+		
+		
+		String last = alphT.keySet().iterator().next();
+		String next = null;
+		StringBuilder toAdd = new StringBuilder(last);
+		Gram current = null;
+		int numWordMade = 0;
+		String[] words = new String[numWord];
+		String add = null;
+		while(numWordMade < numWord)
+		{
+			try
+			{
+				current = alphT.get(last);
+				next = current.getNext();
+				add = next.substring(next.length()-1,next.length());
+				//System.out.println(current.getCurrent() + "  " + next + " : " + add);
+				
+				if(add.equals(" "))
+				{
+					words[numWordMade] = toAdd.toString();
+					numWordMade++;
+					last = next;
+					toAdd.setLength(0);
+				}else
+				{
+					toAdd.append(add);
+					last = next;
+				}
+				
+			}catch (Exception e)
+			{
+				System.out.println("Not great");
+				e.printStackTrace();
+				break;
+			}
+		}
+		
+		List<String> validWords = c.findWords(words);
+		
+		System.out.println("Number of words created: " + validWords.size());
+		System.out.println("% Words valid: " + validWords.size() / (double)(numWord) * 100);
+		
+		System.out.println("---DONE Third Order---");
+		
+		
 	}
 }

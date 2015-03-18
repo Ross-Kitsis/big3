@@ -139,7 +139,7 @@ public class Common
 			}
 			
 			//Replace numbers with #
-			toAdd = toAdd.replaceAll("[0-9]+", "#");
+			toAdd = toAdd.replaceAll("[0-9]", "#");
 			
 			//Replace incorrect char
 			List<String> accept = Arrays.asList(accepted);
