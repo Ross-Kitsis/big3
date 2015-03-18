@@ -27,7 +27,7 @@ public class Gram
 		if(numCurrent == null)
 		{
 			//Indicates value was not in level n-1; should never get here
-			throw new Exception("Value not in map");
+			throw new Exception("Value not in map; value searched is: " + current);
 		}else
 		{
 			int num = numCurrent.intValue();
@@ -74,6 +74,12 @@ public class Gram
 				break;
 			}
 		}
+		//Failsafe in case s is empty
+		if(next == null)
+		{
+			next = " ";
+		}
+		
 		return next;
 	}
 	public Map<String,Double> getProbabilitySet()

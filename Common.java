@@ -8,6 +8,9 @@ public class Common
 	private String[] alph;	
 	private final String dictLocation = "wordList.txt";
 	private List<String> dictionary;
+	private static String[] accepted = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r", "s"
+		,"t","u","v","w","x","y","z","#",",",".",";",":","?","!","(",")","-","\"","\'","@"," "};
+	
 	
 	public Common()
 	{
@@ -137,6 +140,18 @@ public class Common
 			
 			//Replace numbers with #
 			toAdd = toAdd.replaceAll("[0-9]+", "#");
+			
+			//Replace incorrect char
+			List<String> accept = Arrays.asList(accepted);
+			for(int i = 0; i <toAdd.length(); i++)
+			{
+				Character c = toAdd.charAt(i);
+				String sc = c.toString();
+				if(!accept.contains(sc))
+				{
+					toAdd = toAdd.replace(c.charValue(),'@');
+				}
+			}
 			
 			//Add to ngram map
 			if(ngrams.containsKey(toAdd))
