@@ -86,4 +86,38 @@ public class Gram
 	{
 		return this.probability;
 	}
+	
+	public void changeResolution(double resolution)
+	{
+		List<String> toRemove = new ArrayList<String>();
+		Set<String> keys = this.probability.keySet();
+		double total = 0;
+		//Find all ngrams which do not meet the resolution
+		for(String s:keys)
+		{
+			double p = probability.get(s);
+			if(p<resolution)
+			{
+				toRemove.add(s);
+				total += p;
+			}
+		}
+		
+		//Remove elements
+		for(String s:toRemove)
+		{
+			this.probability.remove(s);
+		}
+		
+		
+		//Shift probabilities to other values
+		keys = this.probability.keySet();
+		double inc = total/keys.size();
+		double old;
+		for(String s:keys)
+		{
+			old = probability.get(s);
+			probability.put(s, old + inc);
+		}
+	}
 }
