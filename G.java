@@ -13,6 +13,7 @@ public class G
 		String trainingFileLocation = "training";
 		String testingFileLocation = "testing";
 		Map<String,Profile> profiles = new HashMap<String,Profile>();
+		Map<String,Profile> testing = new HashMap<String,Profile>();
 		
 		File f = new File(trainingFileLocation);
 		File[] books = f.listFiles();
@@ -73,11 +74,13 @@ public class G
 			}
 		}
 		
-		Set<String> s = profiles.keySet();
-		for(String a: s)
+		//Ngrams collected but havn't been adjusted for length yet
+		Set<String> auth = profiles.keySet();
+		for(String s:auth)
 		{
-			System.out.println(a);
+			profiles.get(s).adjustProfileLength(l);
 		}
+		
 		
 	}
 	//Builds a new profile or adds to an existing profile
@@ -85,4 +88,5 @@ public class G
 	{
 		
 	}
+	
 }
