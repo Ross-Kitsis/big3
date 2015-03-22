@@ -31,6 +31,12 @@ public class Profile
 	}
 	public void adjustProfileLength(int l)
 	{
+		if(this.profile.keySet().size() < l)
+		{
+			return;
+		}
+		
+		
 		Map<String,Integer> newProfile = new HashMap<String,Integer>();
 		
 		
@@ -64,6 +70,13 @@ public class Profile
 		}
 		
 		this.profile = newProfile;
-		System.out.println(profile.keySet().size());
+		
+		
+		Set<String> t = profile.keySet();
+		for(String s:t)
+		{
+			System.out.print(s +",");
+		}
+		System.out.println("\n");
 	}
 }
