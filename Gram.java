@@ -5,7 +5,7 @@ import java.util.*;
 public class Gram 
 {
 	private String current; //Current
-	private Map<String,Double> probability = new HashMap<String,Double>();
+	private Map<String,Double> probability = new LinkedHashMap<String,Double>();
 	Random r = new Random(System.currentTimeMillis());
 	
 	public Gram(String current)

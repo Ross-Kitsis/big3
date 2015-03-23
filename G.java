@@ -3,17 +3,18 @@ package big2;
 import java.util.*;
 import java.io.*;
 
+
 public class G 
 {
 	public static void main(String[] args)
 	{
-		int n = 3;
-		int l = 1500;
+		int n = 6;
+		int l = 2000;
 		Common c = new Common();
 		String trainingFileLocation = "training";
 		String testingFileLocation = "testing";
-		Map<String,Profile> profiles = new HashMap<String,Profile>();
-		Map<String,Profile> testing = new HashMap<String,Profile>();
+		Map<String,Profile> profiles = new LinkedHashMap<String,Profile>();
+		Map<String,Profile> testing = new LinkedHashMap<String,Profile>();
 		
 		
 		/*
@@ -54,7 +55,7 @@ public class G
 				if(p==null)
 				{
 					//First time the author has been seen; need to create a new profile
-					p = new Profile(authorName,new HashMap<String,Integer>());
+					p = new Profile(authorName,new LinkedHashMap<String,Integer>());
 					profiles.put(authorName, p);
 				}
 				
@@ -118,7 +119,7 @@ public class G
 			}
 		}
 		
-		System.out.println("Num tested: " + tests.size() + "Correct " + numCorrect + "Percentage: " + numCorrect/tests.size());
+		System.out.println("Num tested: " + tests.size() + " Correct " + numCorrect + " Percentage: " + numCorrect/tests.size());
 		
 		/*
 		//Set<String> tests = profiles.keySet();
@@ -134,7 +135,14 @@ public class G
 		*/
 
 	}
-	
+	public static void buildProfilesBytes(String testingFileLocation, Map<String,Profile> profiles, Common c, int n)
+	{
+		File f = new File(testingFileLocation);
+		File[] books = f.listFiles();
+		Profile p;
+		String authorName = "";
+		
+	}
 	
 	public static void buildProfiles(String testingFileLocation, Map<String,Profile> profiles, Common c, int n)
 	{
@@ -175,7 +183,7 @@ public class G
 				if(p==null)
 				{
 					//First time the author has been seen; need to create a new profile
-					p = new Profile(authorName,new HashMap<String,Integer>());
+					p = new Profile(authorName,new LinkedHashMap<String,Integer>());
 					profiles.put(authorName, p);
 				}
 				

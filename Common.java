@@ -114,6 +114,11 @@ public class Common
 		//System.out.println(toReturn.size());
 		return toReturn;
 	}
+	public void getNgramsBytes(Byte[] bytes, int size, Map<String,Integer>ngrams)
+	{
+		
+	}
+	
 	
 	//Find ngrams in the passed text with the passed size, place found ngrams into the map
 	public void getNgrams(String text, int size, Map<String,Integer> ngrams)
@@ -121,7 +126,7 @@ public class Common
 		int end;
 		String toAdd;
 		
-		for(int start = 0; start < text.length(); start++)
+		for(int start = 0; start < text.length()-size; start++)
 		{
 			//Start inclusive
 			//End exclusive

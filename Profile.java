@@ -37,7 +37,7 @@ public class Profile
 		}
 		
 		
-		Map<String,Integer> newProfile = new HashMap<String,Integer>();
+		Map<String,Integer> newProfile = new LinkedHashMap<String,Integer>();
 		
 		
 		String keyMaxGram = "";
