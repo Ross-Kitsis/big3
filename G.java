@@ -8,8 +8,8 @@ public class G
 {
 	public static void main(String[] args)
 	{
-		int n = 6;
-		int l = 2000;
+		int n = 8;
+		int l = 1500;
 		Common c = new Common();
 		String trainingFileLocation = "training";
 		String testingFileLocation = "testing";
@@ -113,7 +113,7 @@ public class G
 			System.out.println("Predicted Author: "+ predictedAuthor);
 			System.out.println();
 			
-			if(correctAuthor.equals(predictedAuthor))
+			if(predictedAuthor.contains(correctAuthor))
 			{
 				numCorrect++;
 			}
@@ -216,10 +216,14 @@ public class G
 		{
 			Profile toCompare = training.get(s);
 			double d = CNG(toCompare,testing);
-			if(d < dis)
+			if(d == dis)
 			{
 				//Found a better match
-				probableAuthor = s;
+				probableAuthor = probableAuthor + s + " ";
+				dis = d;
+			}else if(d < dis)
+			{
+				probableAuthor = s + " ";
 				dis = d;
 			}
 		}
@@ -230,16 +234,41 @@ public class G
 	//Run CNG on 2 profiles
 	private static double CNG(Profile p, Profile q)
 	{
+		//Need to build a map containing the union of the 2 profiles
+		List<String> union = new ArrayList<String>();
+		
+		
 		double dis = 0;
 		
 		Map<String,Integer> pMap = p.getProfile();
-		Set<String> ngrams = pMap.keySet();
+		//Set<String> ngrams = pMap.keySet();
 		Map<String,Integer> qMap = q.getProfile();
+		
+		//Build the union (P)
+		for(String s:pMap.keySet())
+		{
+			if(! (union.contains(s)))
+			{
+				union.add(s);
+			}
+				
+		}
+		//Add to the union (Q)
+		for(String s:qMap.keySet())
+		{
+			if(! (union.contains(s)))
+			{
+				union.add(s);
+			}
+		}
+		
+		
+		
 		
 		Integer nump;
 		Integer numq;
 		
-		for(String s:ngrams)
+		for(String s:union)
 		{
 			nump = pMap.get(s);
 			numq = qMap.get(s);
