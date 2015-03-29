@@ -11,8 +11,8 @@ public class H
 {
 	public static void main(String[] args)
 	{
-		int n = 4;
-		int L = 2000;
+		int n = 7;
+		int L = 1500;
 		Common c = new Common();
 		String bookFileLocation = "books";
 		Map<String,Profile> trainingProfiles = new LinkedHashMap<String,Profile>();
@@ -41,6 +41,9 @@ public class H
 		books = bl.toArray(new File[books.length-1]);
 		//DS Files removed
 		
+		
+		/*
+		
 		//Build the List of files of use for training
 		int mod = books.length;
 		Random r = new Random(System.currentTimeMillis());
@@ -52,24 +55,19 @@ public class H
 		for(int i = 0;i<numToTest; i++)
 		{
 			forTraining.add(books[(start+i)%mod]);
-			//System.out.print(books[(start+i)%mod] + " ");
 		}
 		System.out.println();
 		for(int i = 0; i<mod-numToTest;i++)
 		{
 			forTesting.add(books[(((start+numToTest)%mod) + i) % mod]);
-			//System.out.print(books[(((start+numToTest)%mod) + i) % mod] + " ");
 		}
 		//Build profiles for the training files
 		buildProfile(forTraining,trainingProfiles,c,n);
+		*/
 		
-		/*
-		buildProfile(forTesting,testingProfiles,c,n);
+		buildProfile(Arrays.asList(books),trainingProfiles,c,n);
 		
-		for(String s: testingProfiles.keySet())
-		{
-			System.out.println(s);
-		}*/
+		
 		
 		//Adjust profile lengths
 		Set<String> collectedGenre = trainingProfiles.keySet();
@@ -78,7 +76,12 @@ public class H
 			trainingProfiles.get(s).adjustProfileLength(L);
 		}
 		//Done adjusting profiles
-		for(File test:forTesting)
+		
+		int numCorrect = 0;
+		
+		
+		for(File test:books)
+		//for(File test:forTesting)
 		{
 			try
 			{
@@ -111,11 +114,28 @@ public class H
 				System.out.println("");
 				System.out.println("Prediction: " + prediction);
 				System.out.println();
+				
+				for(String g: genres)
+				{
+					if(prediction.contains(g))
+					{
+						numCorrect++;
+						break;
+					}
+				}
+				
 			}catch(Exception e)
 			{
 				e.printStackTrace();
+			}finally
+			{
 			}
 		}
+		
+		System.out.println();
+		System.out.println("Number of books tested: " + books.length);
+		System.out.println("Number of predictions correct: " + numCorrect + " " + 
+				numCorrect/(double)books.length);
 		
 	}
 	

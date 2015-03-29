@@ -208,6 +208,7 @@ public class G
 		Integer nump;
 		Integer numq;
 		
+		
 		for(String s:union)
 		{
 			nump = pMap.get(s);
