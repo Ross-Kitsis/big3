@@ -158,7 +158,7 @@ public class G
 			double d = CNG(toCompare,testing);
 			if(d == dis)
 			{
-				//Found a better match
+				//Found a equally likely match
 				probableAuthor = probableAuthor + s + " ";
 				dis = d;
 			}else if(d < dis)

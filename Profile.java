@@ -71,12 +71,12 @@ public class Profile
 		
 		this.profile = newProfile;
 		
-		
+		/*
 		Set<String> t = profile.keySet();
 		for(String s:t)
 		{
 			System.out.print(s +",");
 		}
-		System.out.println("\n");
+		System.out.println("\n");*/
 	}
 }

@@ -11,8 +11,8 @@ public class H
 {
 	public static void main(String[] args)
 	{
-		int n = 3;
-		int L = 1500;
+		int n = 4;
+		int L = 2000;
 		Common c = new Common();
 		String bookFileLocation = "books";
 		Map<String,Profile> trainingProfiles = new LinkedHashMap<String,Profile>();
@@ -100,8 +100,17 @@ public class H
 				//Adjust testing profile length
 				p.adjustProfileLength(L);
 				
-				
-				
+				String prediction = findGenre(trainingProfiles,p);
+				System.out.println("Author: " + authorName);
+				System.out.println("Title: " + bookTitle);
+				System.out.print("Genre(s): ");
+				for(String g:genres)
+				{
+					System.out.print(g + " ");
+				}
+				System.out.println("");
+				System.out.println("Prediction: " + prediction);
+				System.out.println();
 			}catch(Exception e)
 			{
 				e.printStackTrace();
@@ -156,7 +165,7 @@ public class H
 			}
 		}
 	}
-	public static String findAuthor(Map<String,Profile> training, Profile testing)
+	public static String findGenre(Map<String,Profile> training, Profile testing)
 	{
 		String genre = "";
 		double dis = Double.MAX_VALUE;
@@ -165,8 +174,19 @@ public class H
 		for(String s:trainGenre)
 		{
 			Profile toCompare = training.get(s);
+			double d = CNG(toCompare,testing);
+			if(d == dis)
+			{
+				//Found an equally likely match
+				genre = genre + s + " ";
+				dis = d;
+			}else if(d < dis)
+			{
+				genre = s + " ";
+				dis = d;
+			}
 		}
-		
+		System.out.println("Lowest Dissimilarity: " + dis);
 		return genre;
 	}
 	private static double CNG(Profile p, Profile q)
