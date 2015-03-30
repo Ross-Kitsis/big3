@@ -1,5 +1,6 @@
 package big2;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.io.*;
 
@@ -8,11 +9,13 @@ public class I
 {
 	public static void main(String[] args)
 	{
-		int n = 3; //ngram length
-		int l = 1500; //Profile length
+		int n = 5; //ngram length
+		int l = 2000; //Profile length
 		Common c = new Common();
 		String bookFileLocation = "books";
 		Map<String,Profile> profiles = new LinkedHashMap<String,Profile>();
+		DecimalFormat df = new DecimalFormat("#####.##");
+		
 		
 		//Read files and create profiles for each author
 		File f = new File(bookFileLocation);
@@ -28,12 +31,76 @@ public class I
 			profiles.get(s).adjustProfileLength(l);
 		}
 		
-		//Run comparison between authors
+		int matrixSize = auth.size() + 1;
+		String[][] compMatrix = new String[matrixSize][matrixSize];
 		
+		int position = 1;
+		//Fill the top row and column
+		Iterator<String> it = auth.iterator();
+		String a;
+		while(it.hasNext())
+		{
+			a = it.next();
+			compMatrix[position][0] = a;
+			compMatrix[0][position] = a;
+			position++;
+		}
+		
+		for(int i = 1; i < compMatrix.length;i++)
+		{
+			String searchAuthor = compMatrix[i][0];
+			Map<String,Double> similarity = getAuthorSimilarityMap(searchAuthor,profiles);
+			for(int j = 1; j < compMatrix.length; j++)
+			{
+				String toGet = compMatrix[0][j];
+				if(toGet.equals(searchAuthor))
+				{
+					compMatrix[i][j] = "-";
+				}else
+				{
+					compMatrix[i][j] = df.format(similarity.get(toGet));
+				}
+			}
+		}
+		
+		for(int i = 0; i < compMatrix.length; i++)
+		{
+			for(int j = 0; j < compMatrix.length; j++)
+			{
+				System.out.print(compMatrix[i][j] + " , ");
+			}
+			System.out.println();
+		}
+		
+		//Run comparison between authors
+		for(String s:auth)
+		{
+			//String similar = compareAuthor(s,profiles);
+			//System.out.println("Author: " + s);
+			//System.out.println("Similar to: " + similar);
+			//System.out.println("");
+			//////Map<String,Double> similarity = getAuthorSimilarityMap(s,profiles);
+			
+			/*
+			System.out.println(s +"\n");
+			
+			Set<String> keys = similarity.keySet();
+			for(String a:keys)
+			{
+				System.out.print(a + " , ");
+			}
+			System.out.println();
+			for(String a:keys)
+			{
+				System.out.print(Double.valueOf(df.format(similarity.get(a))) + " , ");
+			}
+			System.out.println();
+			System.out.println();*/
+		}
 		
 	}
 	public static String compareAuthor(String author, Map<String,Profile> profiles)
-	{
+	{		
 		String similar = "";
 		
 		Profile authorProfile = profiles.get(author);
@@ -64,6 +131,29 @@ public class I
 		}
 		
 		return similar;
+	}
+	
+	public static Map<String,Double> getAuthorSimilarityMap(String author, Map<String,Profile> profiles)
+	{
+		Map<String,Double> similarityMap = new LinkedHashMap<String,Double>();
+		Profile authorProfile = profiles.get(author);
+		
+		Set<String> allAuthors = profiles.keySet();
+		Profile toCompare;
+		
+		double dis = Double.MAX_VALUE;
+		double foundDis;
+		
+		for(String auth:allAuthors)
+		{
+			if(auth != author)
+			{
+				toCompare = profiles.get(auth);
+				similarityMap.put(auth, CNG(authorProfile,toCompare));
+			}
+		}
+		
+		return similarityMap;
 	}
 	
 	public static void buildProfiles(String testingFileLocation, Map<String,Profile> profiles, Common c, int n)
@@ -128,57 +218,57 @@ public class I
 		}
 	}
 	//Run CNG on 2 profiles
-		private static double CNG(Profile p, Profile q)
+	private static double CNG(Profile p, Profile q)
+	{
+		//Need to build a map containing the union of the 2 profiles
+		List<String> union = new ArrayList<String>();
+
+
+		double dis = 0;
+
+		Map<String,Integer> pMap = p.getProfile();
+		//Set<String> ngrams = pMap.keySet();
+		Map<String,Integer> qMap = q.getProfile();
+
+		//Build the union (P)
+		for(String s:pMap.keySet())
 		{
-			//Need to build a map containing the union of the 2 profiles
-			List<String> union = new ArrayList<String>();
-			
-			
-			double dis = 0;
-			
-			Map<String,Integer> pMap = p.getProfile();
-			//Set<String> ngrams = pMap.keySet();
-			Map<String,Integer> qMap = q.getProfile();
-			
-			//Build the union (P)
-			for(String s:pMap.keySet())
+			if(! (union.contains(s)))
 			{
-				if(! (union.contains(s)))
-				{
-					union.add(s);
-				}
-					
-			}
-			//Add to the union (Q)
-			for(String s:qMap.keySet())
-			{
-				if(! (union.contains(s)))
-				{
-					union.add(s);
-				}
+				union.add(s);
 			}
 
-			Integer nump;
-			Integer numq;
-			
-			
-			for(String s:union)
-			{
-				nump = pMap.get(s);
-				numq = qMap.get(s);
-				
-				if(nump == null)
-				{
-					nump = 0;
-				}else if(numq == null)
-				{
-					numq = 0;
-				}
-				
-				dis = dis + Math.pow(((2 * (nump - (double) numq))/(double)(nump+numq)),2);
-				
-			}
-			
-			return dis;
 		}
+		//Add to the union (Q)
+		for(String s:qMap.keySet())
+		{
+			if(! (union.contains(s)))
+			{
+				union.add(s);
+			}
+		}
+
+		Integer nump;
+		Integer numq;
+
+
+		for(String s:union)
+		{
+			nump = pMap.get(s);
+			numq = qMap.get(s);
+
+			if(nump == null)
+			{
+				nump = 0;
+			}else if(numq == null)
+			{
+				numq = 0;
+			}
+
+			dis = dis + Math.pow(((2 * (nump - (double) numq))/(double)(nump+numq)),2);
+
+		}
+
+		return dis;
+	}
 }
