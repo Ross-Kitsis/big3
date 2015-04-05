@@ -1,5 +1,6 @@
 package big2;
 import java.util.*;
+import java.io.*;
 
 public class A 
 {
@@ -16,6 +17,37 @@ public class A
 		
 		String[] words = c.makeWords(numWord);
 		List<String> validWords = c.findWords(words);
+		
+		File f = new File("a1.txt");
+		if(!f.exists())
+		{
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
+			for(String s:words)
+			{
+				out.println(s);
+			}
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("----------------VALID WORDS:-------------");
+		for(String s:validWords)
+		{
+			System.out.println(s);
+		}
+		System.out.println("--------------------------");
+
 		
 		System.out.println("Number of words created: " + validWords.size());
 		System.out.println("% Words valid: " + validWords.size() / (double)(numWord) * 100);

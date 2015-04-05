@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,14 +20,14 @@ public class D
 	static int uniSize = 1;
 	static int biSize = 2;
 	static int triSize = 3;
-	static int numWord = 1000;
+	static int numWord = 10000;
 	static Common c = new Common();
 	static Map<String,Integer> unigrams = new HashMap<String,Integer>();
 	static Map<String,Integer> bigrams = new HashMap<String,Integer>();
 	static Map<String,Integer> trigrams = new HashMap<String,Integer>();
 	static Map<String,Gram> alphS = new HashMap<String,Gram>();
 	static Map<String,Gram> alphT = new HashMap<String,Gram>();
-	static double resolution = 0.001;
+	static double resolution = 0.01;
 	
 	public static void main(String[] args)
 	{
@@ -35,12 +36,43 @@ public class D
 		c.buildDictionary();
 		
 		
-		File f = new File("books");
+		File f = new File("bronte");
 		
 		File[] files = f.listFiles();
-		for(int i = 0; i < files.length/*i<2*/; i++)
+		
+		/////////////////////////////
+
+		//Remove .DS file if on MAC
+		for(int i = 0; i < files.length; i++)
 		{
-			//System.out.println(files[i].getAbsolutePath());
+			if(files[i].getAbsolutePath().contains(".DS_"))
+			{
+				files[i] = null;
+			}
+		}
+
+		List<File> bl = new ArrayList<File>();
+		for(File fb:files)
+		{
+			if(fb!=null)
+			{
+				bl.add(fb);
+			}
+		}
+
+		files = bl.toArray(new File[files.length-1]);
+
+
+
+		//////////////////////////////////
+
+
+		
+		
+		//for(int i = 0; i < files.length; i++)
+		for(int i = 0; i < 1; i++)
+		{
+			System.out.println(files[i].getAbsolutePath());
 			BufferedReader br = null;
 			
 			try {
@@ -63,7 +95,7 @@ public class D
 			}
 		}
 		//Second Order ##############
-		secondOrder();
+//		secondOrder();
 		//Third Order ##############
 		thirdOrder();
 	}
@@ -119,6 +151,11 @@ public class D
 			}
 		}
 		List<String> validWords = c.findWords(words);
+		
+		for(String s: validWords)
+		{
+			System.out.println(s);
+		}
 		
 		System.out.println("Number of words created: " + validWords.size());
 		System.out.println("% Words valid: " + validWords.size() / (double)(numWord) * 100);
@@ -182,6 +219,12 @@ public class D
 		}
 		
 		List<String> validWords = c.findWords(words);
+		
+		for(String s: validWords)
+		{
+			System.out.println(s);
+		}
+		
 		
 		System.out.println("Number of words created: " + validWords.size());
 		System.out.println("% Words valid: " + validWords.size() / (double)(numWord) * 100);

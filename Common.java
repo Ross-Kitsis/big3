@@ -107,8 +107,14 @@ public class Common
 		{
 			if(s.length() > 1 && dictionary.contains(s))
 			{
-				//System.out.println(s);
+				
 				toReturn.add(s);
+				/*
+				//System.out.println(s);
+				if(!toReturn.contains(s))
+				{
+					toReturn.add(s);
+				}*/
 			}
 		}
 		//System.out.println(toReturn.size());
@@ -183,7 +189,156 @@ public class Common
 		return profile;
 	}
 	
-	
-	
+	public void buildModel(String[][] model,int order,File book,String[] accepted)
+	{
+		System.out.println(book.getAbsolutePath());
+		try {
+			String sub;
+			String current;
+			int stringLength;
+			BufferedReader br = new BufferedReader(new FileReader(book));
+			int row = 0;
+			int col = 0;
+			String toFind;
+			String next;
+			String currentVal;
+			
+			if(model[0][0] == null)
+			{
+				//Initialize values in array to 1 if needed
+				for(int i = 1; i < model.length; i++)
+				{
+					for(int j = 1; j < model[0].length; j++)
+					{
+						if(model[i][j] == null)
+						{
+							model[i][j] = "1";
+						}
+					}
+					model[0][0] = "Initialized";
+				}
+			}
+
+			while((current = br.readLine()) != null)
+			{
+				//Convert to all lower case
+				current = current.toLowerCase();
+				
+				//Replace numbers with #
+				current = current.replaceAll("[0-9]", "#");
+				
+				
+				//Replace incorrect char
+				List<String> accept = Arrays.asList(accepted);
+				for(int i = 0; i <current.length(); i++)
+				{
+					Character c = current.charAt(i);
+					String sc = c.toString();
+					if(!accept.contains(sc))
+					{
+						//System.out.println("Replacing: " + sc);
+						current = current.replace(c.charValue(),'@');
+					}
+				}
+				
+				//Extract ngrams and put their frequency in the array
+				stringLength = current.length();
+				if(stringLength != 0)
+				{
+					//System.out.println(current);
+					for(int i = 0; i < stringLength - order+1; i++)
+					{
+						sub = current.substring(i, i+order);
+						
+						toFind = sub.substring(0, order-1);
+						next = sub.substring(order-1);
+						
+						
+						//System.out.println(sub);
+						
+						
+						row = getRow(toFind, model);
+						col = getCol(next,model);
+						
+						//System.out.println(toFind + " : " + row + "    " + next + " : " + col);
+						
+						//Increase number of occurances of an ngram
+						currentVal = model[row][col];
+						if(currentVal == null)
+						{
+							model[row][col] = new Integer(1).toString();
+						}else
+						{
+							model[row][col] = new Integer(Integer.parseInt(currentVal) + 1).toString();
+						}
+						
+					}
+					//Scanner inp = new Scanner(System.in);
+					//inp.next();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public int getRow(String toFind, String[][] model)
+	{
+		int toReturn = 0;
+		for(int i = 1; i < model.length; i++)
+		{
+			if(model[i][0].equals(toFind))
+			{
+				toReturn = i;
+				break;
+			}
+		}
+		
+		if(toReturn == 0)
+		{
+			System.out.println("toFind:<" + toFind+">");
+			//System.out.println("");
+			Scanner in = new Scanner(System.in);
+			in.next();
+		}
+		
+		return toReturn;
+	}
+	public int getCol(String toFind, String[][] model)
+	{
+		int toReturn = 0;
+		for(int i = 1; i < model[0].length; i++)
+		{
+			if(model[0][i].equals(toFind))
+			{
+				toReturn = i;
+				break;
+			}
+		}
+		return toReturn;
+	}
+	public void setResolution(String[][] model, double resolution)
+	{
+		int total;
+		for(int i = 1; i < model.length;i++)
+		{
+			total = 0;
+			for(int j = 1; j < model[0].length; j++)
+			{
+				total = total + Integer.parseInt(model[i][j]);
+			}
+			
+			for(int j = 1; j<model.length;j++)
+			{
+				if(Integer.parseInt(model[i][j]) < resolution)
+				{
+					model[i][j] = "0";
+				}
+			}
+		}
+	}
 	
 }

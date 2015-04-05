@@ -1,5 +1,10 @@
 package big2;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class B 
@@ -141,6 +146,38 @@ public class B
 		
 		String[] words = com.makeWords(numWord);
 		List<String> validWords = com.findWords(words);
+		
+		File file = new File("1b.txt");
+		if(!file.exists())
+		{
+			try {
+				file.createNewFile();
+			} catch (IOException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+		}
+		
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+			for(String st:words)
+			{
+				out.println(st);
+			}
+			out.close();
+		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
+		
+		System.out.println("----------------VALID WORDS:-------------");
+		for(String st:validWords)
+		{
+			System.out.println(st);
+		}
+		System.out.println("--------------------------");
+
+		
 		
 		System.out.println("Number of words created: " + validWords.size());
 		System.out.println("% Words valid: " + validWords.size() / (double)(numWord) * 100 + "%");
